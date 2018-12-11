@@ -29,7 +29,8 @@ function shuffle(array) {
 // Builds a new deck on page load or reset
 function buildDeck() {
   let newDeck = [];
-  //Build deck
+  /* Build deck
+    Added here to allow use of the same function at restarts */
   for (const card of deck) {
     let thisCard = `<li class="card">
     <i class="fa ${card}"></i></li>`;
@@ -53,7 +54,7 @@ function buildDeck() {
  *    + if all cards have matched, display a message with the final score (put this functionality in another function that you call from this one)
  */
 
-let moveCount = 1;
+let moveCount = 0;
 let matchCount = 0;
 let activeCards = [];
 
@@ -69,14 +70,16 @@ function addListeners() {
   }
 }
 
+// show a card if it doesn't already have open, show, or match classes
+// push card to activeCards array
 function showCard(a) {
   if (!a.toElement.classList.contains('match') && !a.toElement.classList.contains('open') && !a.toElemnt.classList.contains('show')) {
-    a.toElement.classList.add('open');
-    a.toElement.classList.add('show');
+    a.toElement.classList.add('open', 'show');
     activeCards.push(a);
   }
 }
 
+// Check if cards match.  Call winner func if all match.
 function cardMatch() {
   for (const card of activeCards) {
     card.toElement.classList.add('match');
@@ -104,22 +107,30 @@ function clickCard(a) {
   }
 }
 
+// Check if cards don't match and remove classes if they don't
+// Reset activeCards array to empty
 function notMarch() {
   for (const card of activeCards) {
-    card.toElement.classList.remove('open');
-    card.toElement.classList.remove('show');
+    card.toElement.classList.remove('open', 'show');
     activeCards = [];
   }
 }
 
+// count the moves taken
 function countMoves() {
+  // Get value of moves
   let moves = document.querySelectorAll('.moves');
+
+  // Need a loop since there are two occurances when the winner popup shows
   for (move of moves) {
     move.innerHTML = moveCount;
   }
+
+  // Increment after updating so this func can be used in restarts
   moveCount += 1;
 }
 
+// Build the popup with the number of moves
 const popupPlace = document.querySelector('.container');
 const textOfPopup = `<div class="holder">
   <div class="popup">
@@ -129,25 +140,39 @@ const textOfPopup = `<div class="holder">
   </div>
 </div>`;
 
+// Add winner popup to the page
+// Since all cards have match class, clicking cards should do nothing at this point
 function winner() {
   popupPlace.insertAdjacentHTML('afterend', textOfPopup);
+
+  // Reapply listeners so popup moves can be incremented
   addListeners();
+
+  // Update move counter in popup
   countMoves();
   console.log(moveCount);
 }
 
+// Re-initialize the game
 function resetAll() {
+  // Remove popup if popup exists
   if (matchCount === 16) {
     let popupHolder = document.querySelector('.holder');
     popupHolder.remove();
   }
+
+  // Reset variables
   matchCount = 0;
   moveCount = 0;
   activeCards = [];
+
+  // Remove the old deck
   let oldDeck = document.querySelectorAll('li.card');
   for (listItem of oldDeck) {
     listItem.remove();
   }
+
+  // Rebuild Deck
   deck = shuffle(items.concat(items));
   buildDeck();
   countMoves();
