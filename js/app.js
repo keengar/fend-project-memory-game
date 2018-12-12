@@ -36,9 +36,7 @@ function buildDeck() {
     <i class="fa ${card}"></i></li>`;
     newDeck.push(thisCard);
   }
-
   document.querySelector('.deck').innerHTML = newDeck.join('');
-
   //Add event listeners on loads and restarts
   addListeners();
 };
@@ -73,8 +71,11 @@ function addListeners() {
 // show a card if it doesn't already have open, show, or match classes
 // push card to activeCards array
 function showCard(a) {
-  if (!a.toElement.classList.contains('match') && !a.toElement.classList.contains('open') && !a.toElemnt.classList.contains('show')) {
-    a.toElement.classList.add('open', 'show');
+  console.log(a.target);
+  let card = a.target;
+
+  if (!card.classList.contains('match') && !card.classList.contains('open') && !card.classList.contains('show')) {
+    card.classList.add('open', 'show');
     activeCards.push(a);
   }
 }
@@ -82,9 +83,8 @@ function showCard(a) {
 // Check if cards match.  Call winner func if all match.
 function cardMatch() {
   for (const card of activeCards) {
-    card.toElement.classList.add('match');
-    card.toElement.classList.remove('open');
-    card.toElement.classList.remove('show');
+    card.target.classList.add('match');
+    card.target.classList.remove('open', 'show');
     matchCount += 1;
     if (matchCount === 16) {
       winner();
@@ -111,7 +111,7 @@ function clickCard(a) {
 // Reset activeCards array to empty
 function notMarch() {
   for (const card of activeCards) {
-    card.toElement.classList.remove('open', 'show');
+    card.target.classList.remove('open', 'show');
     activeCards = [];
   }
 }
@@ -120,12 +120,10 @@ function notMarch() {
 function countMoves() {
   // Get value of moves
   let moves = document.querySelectorAll('.moves');
-
   // Need a loop since there are two occurances when the winner popup shows
   for (move of moves) {
     move.innerHTML = moveCount;
   }
-
   // Increment after updating so this func can be used in restarts
   moveCount += 1;
 }
@@ -160,18 +158,15 @@ function resetAll() {
     let popupHolder = document.querySelector('.holder');
     popupHolder.remove();
   }
-
   // Reset variables
   matchCount = 0;
   moveCount = 0;
   activeCards = [];
-
   // Remove the old deck
   let oldDeck = document.querySelectorAll('li.card');
   for (listItem of oldDeck) {
     listItem.remove();
   }
-
   // Rebuild Deck
   deck = shuffle(items.concat(items));
   buildDeck();
