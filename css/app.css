@@ -52,12 +52,20 @@ h1 {
   max-height: 520px;
   text-align: center;
   text-justify: center;
-  padding: 100px 32px;
   border-radius: 10px;
   box-shadow: 12px 15px 20px 0 rgba(46, 61, 73, 0.5);
   background: linear-gradient(160deg, #aa7ecd 0%, #02ccba 100%);
   font-size: 125%;
   margin: auto;
+}
+
+.win {
+  padding: 65px 32px;
+}
+
+.begin {
+  padding: 220px 32px;
+  cursor: pointer;
 }
 
 .popup h1 {
@@ -67,9 +75,11 @@ h1 {
 .popup button {
   font-size: 125%;
   background: #02eeba;
+  margin: 5px auto;
   padding: 5px 10px;
   border-radius: 10px;
   border-width: 0px;
+  cursor: pointer;
 }
 
 /*
@@ -139,7 +149,7 @@ h1 {
 
 .score-panel {
   text-align: left;
-  width: 345px;
+  width: 400px;
   margin-bottom: 10px;
 }
 
@@ -151,6 +161,12 @@ h1 {
   margin: 0 5px 0 0;
 }
 
+.counter,
+.timer,
+.score-panel .restart {
+  display: inline-block;
+  margin-left: 30px;
+}
 .score-panel .stars li,
 .starlist li {
   list-style: none;
@@ -158,6 +174,5 @@ h1 {
 }
 
 .score-panel .restart {
-  float: right;
   cursor: pointer;
 }
