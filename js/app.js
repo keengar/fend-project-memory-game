@@ -41,6 +41,18 @@ function buildDeck() {
   addListeners();
 };
 
+// Build initial 7 stars
+function buildStars() {
+  let stars = [];
+  let newStar = `<li><i class="fa fa-star"></i></li>`;
+
+  for (let index = 0; index < 7; index++) {
+    stars.push(newStar);
+  }
+
+  document.querySelector('.stars').innerHTML = stars.join('');
+};
+
 /*
  * set up the event listener for a card. If a card is clicked:
  *  - display the card's symbol (put this functionality in another function that you call from this one)
@@ -55,6 +67,14 @@ function buildDeck() {
 let moveCount = 0;
 let matchCount = 0;
 let activeCards = [];
+
+// Remove a star from list
+function removeStar() {
+  if (moveCount > 11 & moveCount % 3 == 0) {
+    let currentStars = document.querySelector('.stars');
+    currentStars.removeChild(currentStars.childNodes[0]);
+  }
+}
 
 function addListeners() {
   let cardList = document.querySelectorAll('li.card');
@@ -98,11 +118,11 @@ function clickCard(a) {
   } else if (activeCards.length === 1) {
     showCard(a);
     if (activeCards.length === 2) {
+      countMoves();
       if (activeCards[0].target.innerHTML === activeCards[1].target.innerHTML) {
         cardMatch();
         activeCards = [];
       } else setTimeout(notMarch, 600);
-      countMoves();
     }
   }
 }
@@ -118,21 +138,18 @@ function notMarch() {
 
 // count the moves taken
 function countMoves() {
-  // Get value of moves
-  let moves = document.querySelectorAll('.moves');
-  // Need a loop since there are two occurances when the winner popup shows
-  for (move of moves) {
-    move.innerHTML = moveCount;
-  }
-  // Increment after updating so this func can be used in restarts
-  moveCount += 1;
+  let move = document.querySelector('.moves');
+  moveCount += 1
+  move.innerHTML = moveCount;
+  removeStar();  // Change stars after updating moveCountsssssssss
 }
 
 // Build the popup with the number of moves
 const popupPlace = document.querySelector('.container');
-const textOfPopup = `<div class="holder">
+let textOfPopup = `<div class="holder">
   <div class="popup">
     <h1>Congratulations!!!</h1>
+    <h1 class="starlist"></h1>
     <h2>You have won in <span class="moves">X</span> moves!</h2>
     <button class="restart">Restart <i class="fa fa-repeat"></i></button>
   </div>
@@ -147,8 +164,14 @@ function winner() {
   addListeners();
 
   // Update move counter in popup
-  countMoves();
-  console.log(moveCount);
+  let moves = document.querySelectorAll('.moves');
+  for (move of moves) {
+    move.innerHTML = moveCount;
+  }
+
+  let finalStars = document.querySelector('.stars');
+  let winnerStars = document.querySelector('.starlist');
+  winnerStars.innerHTML = finalStars.innerHTML;
 }
 
 // Re-initialize the game
@@ -170,7 +193,9 @@ function resetAll() {
   // Rebuild Deck
   deck = shuffle(items.concat(items));
   buildDeck();
-  countMoves();
+  let moves = document.querySelectorAll('.moves'); // reset moves
+  moves.innerHTML = moveCount;
+  buildStars()
 }
 
 // Load random deck on page load and restarts
