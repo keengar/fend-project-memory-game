@@ -46,7 +46,7 @@ function buildStars() {
   let stars = [];
   let newStar = `<li><i class="fa fa-star"></i></li>`;
 
-  for (let index = 0; index < 7; index++) {
+  for (let index = 0; index < 5; index++) {
     stars.push(newStar);
   }
 
@@ -70,7 +70,7 @@ let activeCards = [];
 
 // Remove a star from list
 function removeStar() {
-  if (moveCount > 11 & moveCount % 3 == 0) {
+  if (moveCount > 15 & moveCount % 4 == 0) {
     let currentStars = document.querySelector('.stars');
     currentStars.removeChild(currentStars.childNodes[0]);
   }
@@ -86,6 +86,23 @@ function addListeners() {
   for (const restart of restarts) {
     restart.addEventListener('click', resetAll);
   }
+}
+
+// start a timmer and update the innerHTML for the minutes and seconds
+function beginTimer() {
+  let seconds = 0;
+	timer = setInterval(function() {
+    seconds ++;
+    let minutes = document.querySelector('.minutes');
+    let secs = document.querySelector('.seconds');
+
+    minutes.innerHTML = Math.floor(seconds / 60);  // 
+    secs.innerHTML = seconds % 60; // Just need the remainder after devided by 60
+    }, 1000);
+}
+
+function stopTimer() {
+  clearInterval(timer);
 }
 
 // show a card if it doesn't already have open, show, or match classes
@@ -147,10 +164,11 @@ function countMoves() {
 // Build the popup with the number of moves
 const popupPlace = document.querySelector('.container');
 let textOfPopup = `<div class="holder">
-  <div class="popup">
+  <div class="win popup">
     <h1>Congratulations!!!</h1>
     <h1 class="starlist"></h1>
     <h2>You have won in <span class="moves">X</span> moves!</h2>
+    <h2>Your time was <span class="time">0</span>.</h2>
     <button class="restart">Restart <i class="fa fa-repeat"></i></button>
   </div>
 </div>`;
@@ -159,6 +177,7 @@ let textOfPopup = `<div class="holder">
 // Since all cards have match class, clicking cards should do nothing at this point
 function winner() {
   popupPlace.insertAdjacentHTML('afterend', textOfPopup);
+  stopTimer();
 
   // Reapply listeners so popup moves can be incremented
   addListeners();
@@ -169,6 +188,10 @@ function winner() {
     move.innerHTML = moveCount;
   }
 
+  let finishTime = document.querySelector('.timer');
+  let popupTime = document.querySelector('.time');
+  popupTime.innerHTML = finishTime.innerHTML;
+
   let finalStars = document.querySelector('.stars');
   let winnerStars = document.querySelector('.starlist');
   winnerStars.innerHTML = finalStars.innerHTML;
@@ -176,16 +199,13 @@ function winner() {
 
 // Re-initialize the game
 function resetAll() {
-  // Remove popup if popup exists
-  if (matchCount === 16) {
-    let popupHolder = document.querySelector('.holder');
-    popupHolder.remove();
-  }
+  let popupHolder = document.querySelector('.holder');
+  popupHolder.remove(); // Remove popup
   // Reset variables
   matchCount = 0;
   moveCount = 0;
   activeCards = [];
-  // Remove the old deck
+    // Remove the old deck
   let oldDeck = document.querySelectorAll('li.card');
   for (listItem of oldDeck) {
     listItem.remove();
@@ -195,8 +215,6 @@ function resetAll() {
   buildDeck();
   let moves = document.querySelectorAll('.moves'); // reset moves
   moves.innerHTML = moveCount;
-  buildStars()
+  buildStars();
+  beginTimer();
 }
-
-// Load random deck on page load and restarts
-resetAll();
